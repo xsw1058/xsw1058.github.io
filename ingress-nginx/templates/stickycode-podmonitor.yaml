@@ -1,0 +1,18 @@
+{{- if .Values.stickyCode.enable -}}
+{{- if .Values.stickyCode.enablePodMonitor -}}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ .Values.stickyCode.name | default "sticky-code" }}-pod-monitor
+  namespace: {{ include "ingress-nginx.namespace" . }}
+spec:
+  selector:
+    matchLabels:
+    {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+  podMetricsEndpoints:
+    - port: {{ .Values.stickyCode.name | default "sticky-code" }}
+      path: /metrics
+      interval: 10s
+{{- end }}
+{{- end }}
